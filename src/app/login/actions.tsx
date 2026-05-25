@@ -2,6 +2,7 @@ export async function authenticateWithGoogle(idToken: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ id_token: idToken }),
   });
 

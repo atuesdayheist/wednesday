@@ -1,9 +1,12 @@
+"use client";
+
 import { GoogleLogin } from "@react-oauth/google";
 
-import { authenticateWithGoogle } from "@/actions/auth";
+import { authenticateWithGoogle } from "@/app/login/actions";
 
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/user/provider";
 
 import {
   Card,
@@ -19,6 +22,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const { setAuth } = useUser();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -39,13 +43,8 @@ export function LoginForm({
                       const idToken = cred?.credential;
                       if (!idToken) return;
                       const resp = await authenticateWithGoogle(idToken);
-
-                      localStorage.setItem("token", resp.access_token);
-                      localStorage.setItem("username", resp.user.name);
-                      localStorage.setItem("picture", resp.user.picture);
-                      localStorage.setItem("email", resp.user.email);
-
-                      router.push("/");
+                      setAuth(resp.user);
+                      router.push("/home");
                     } catch (err) {
                       console.error("Google Auth Failed: ", err);
                     }
